@@ -1,0 +1,15 @@
+spring:
+  application:
+    name: dvh
+  datasource:
+    url: jdbc:mysql://localhost:3306/dvh?createDatabaseIfNotExist=true
+    username: root
+    password: root
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+server:
+  port: 5555

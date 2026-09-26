@@ -1,6 +1,8 @@
 package com.dvh.common.exception;
 
 import com.dvh.common.ErrorResponse;
+import com.dvh.user.exception.UserAlreadyExistsException;
+import com.dvh.vendor.exception.VendorAlreadyExistsException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.*;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -17,7 +19,7 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(new ErrorResponse(
                         LocalDateTime.now(),
-                        "INTERVAL_SERVER_ERROR",
+                        "INTERNAL_SERVER_ERROR",
                         "Something went wrong",
                         request.getRequestURI()));
     }
@@ -36,7 +38,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(InvalidRoleException.class)
     public ResponseEntity<ErrorResponse> invalidRoleException(InvalidRoleException ex,
                                                               HttpServletRequest req){
-        return ResponseEntity.status(HttpStatus.FORBIDDEN.value())
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
                 .body(new ErrorResponse(
                         LocalDateTime.now(),
                         "INVALID_ROLE",
@@ -72,5 +74,15 @@ public class GlobalExceptionHandler {
                         collect,
                         req.getRequestURI()));
 
+    }
+
+    @ExceptionHandler(UserAlreadyExistsException.class)
+    public ResponseEntity<ErrorResponse> userAlreadyExistsException(UserAlreadyExistsException ex,HttpServletRequest req){
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(new ErrorResponse(
+                        LocalDateTime.now(),
+                        "DUPLICATE_ENTRY",
+                        ex.getMessage(),
+                        req.getRequestURI()));
     }
 }

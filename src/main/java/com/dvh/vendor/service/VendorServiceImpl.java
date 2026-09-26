@@ -2,7 +2,7 @@ package com.dvh.vendor.service;
 
 import com.dvh.common.exception.InvalidRoleException;
 import com.dvh.common.exception.UserNotFoundException;
-import com.dvh.common.exception.VendorAlreadyExistsException;
+import com.dvh.vendor.exception.VendorAlreadyExistsException;
 import com.dvh.user.constants.Role;
 import com.dvh.user.entity.User;
 import com.dvh.vendor.dto.request.VendorCreateRequest;

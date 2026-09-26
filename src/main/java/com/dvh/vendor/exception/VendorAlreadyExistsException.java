@@ -1,4 +1,4 @@
-package com.dvh.common.exception;
+package com.dvh.vendor.exception;
 
 
 public class VendorAlreadyExistsException extends RuntimeException{

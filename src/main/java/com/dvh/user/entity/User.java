@@ -25,10 +25,10 @@ public class User {
     @Column(nullable = false,length = 40)
     private String name;
 
-    @Column(nullable = false,unique = true,length = 40)
+    @Column(nullable = false,length = 40)
     private String email;
 
-    @Column(nullable = false,unique = true,length = 10)
+    @Column(nullable = false,length = 10)
     private String phone;
 
     @Column(name = "password_hash",nullable = false)

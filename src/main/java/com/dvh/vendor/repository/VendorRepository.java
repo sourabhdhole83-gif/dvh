@@ -1,8 +1,6 @@
 package com.dvh.vendor.repository;
 
-import com.dvh.user.entity.User;
 import com.dvh.vendor.entity.Vendor;
-import org.hibernate.dialect.lock.OptimisticEntityLockException;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

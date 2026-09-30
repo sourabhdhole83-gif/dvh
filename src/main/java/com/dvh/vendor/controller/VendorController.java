@@ -1,7 +1,6 @@
 package com.dvh.vendor.controller;
 
 import com.dvh.common.APIResponse;
-import com.dvh.user.entity.User;
 import com.dvh.vendor.dto.request.VendorCreateRequest;
 import com.dvh.vendor.dto.response.VendorResponse;
 import com.dvh.vendor.service.VendorService;
@@ -15,22 +14,22 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
-@AllArgsConstructor@NoArgsConstructor
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/v1/vendor")
 public class VendorController {
 
-    private VendorService vendorService;
+    private final VendorService vendorService;
 
     @PostMapping("/createVendor")
-    public ResponseEntity<APIResponse<VendorResponse>> createVendor(@Valid @RequestBody VendorCreateRequest createRequest, User user){
+    public ResponseEntity<APIResponse<VendorResponse>> createVendor(@Valid @RequestBody VendorCreateRequest createRequest){
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userName = authentication.getName();
 
         log.info("Logged-in user: {}", userName );
 
-        VendorResponse response = vendorService.createVendor(createRequest, user);
+        VendorResponse response = vendorService.createVendor(createRequest, userName);
         return ResponseEntity.status(HttpStatus.CREATED).body(
                 new APIResponse<>(true,"Vendor created successfully",response));
     }

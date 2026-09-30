@@ -28,6 +28,6 @@ public class UserController {
     @GetMapping("/{id}")
     public ResponseEntity<APIResponse<UserResponse>> getUserById(@PathVariable Long id){
         UserResponse userResponse = userService.getUserById(id);
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(new APIResponse<>(true, "User created successfully", userResponse));    }
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new APIResponse<>(true, "User details fetched successfully", userResponse));    }
 }

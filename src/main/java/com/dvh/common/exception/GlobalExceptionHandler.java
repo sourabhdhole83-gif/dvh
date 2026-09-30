@@ -9,7 +9,8 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
-import java.util.stream.Collectors;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -21,7 +22,8 @@ public class GlobalExceptionHandler {
                         LocalDateTime.now(),
                         "INTERNAL_SERVER_ERROR",
                         "Something went wrong",
-                        request.getRequestURI()));
+                        request.getRequestURI(),
+                        null));
     }
 
     @ExceptionHandler(UserNotFoundException.class)
@@ -32,7 +34,8 @@ public class GlobalExceptionHandler {
                         LocalDateTime.now(),
                         "USER_NOT_FOUND",
                         ex.getMessage(),
-                        req.getRequestURI()));
+                        req.getRequestURI(),
+                        null));
     }
 
     @ExceptionHandler(InvalidRoleException.class)
@@ -43,7 +46,8 @@ public class GlobalExceptionHandler {
                         LocalDateTime.now(),
                         "INVALID_ROLE",
                         ex.getMessage(),
-                        req.getRequestURI()));
+                        req.getRequestURI(),
+                        null));
     }
 
     @ExceptionHandler(VendorAlreadyExistsException.class)
@@ -54,25 +58,27 @@ public class GlobalExceptionHandler {
                         LocalDateTime.now(),
                         "VENDOR_ALREADY_EXISTS",
                         ex.getMessage(),
-                        req.getRequestURI()));
+                        req.getRequestURI(),
+                        null));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> methodArgumentNotValidException(MethodArgumentNotValidException ex,
                                                                          HttpServletRequest req){
 
-        String collect = ex.getBindingResult()
-                           .getFieldErrors()
-                           .stream()
-                           .map(error -> error.getField() + ": " + error.getDefaultMessage())
-                           .collect(Collectors.joining(", "));
+        Map<String,String> errors = new LinkedHashMap<>();
+        ex.getBindingResult()
+                .getFieldErrors()
+                .forEach(error->
+                        errors.put(error.getField(),error.getDefaultMessage()));
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(new ErrorResponse(
                         LocalDateTime.now(),
                         "VALIDATION_ERROR",
-                        collect,
-                        req.getRequestURI()));
+                        "Validation failed",
+                        req.getRequestURI(),
+                        errors));
 
     }
 
@@ -83,6 +89,18 @@ public class GlobalExceptionHandler {
                         LocalDateTime.now(),
                         "DUPLICATE_ENTRY",
                         ex.getMessage(),
-                        req.getRequestURI()));
+                        req.getRequestURI(),
+                        ex.getErrors()));
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ErrorResponse> illegalArgumentException(IllegalArgumentException ex,HttpServletRequest req){
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                new ErrorResponse(
+                        LocalDateTime.now(),
+                        "BAD_REQUEST",
+                        ex.getMessage(),
+                        req.getRequestURI(),
+                        null));
     }
 }

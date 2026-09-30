@@ -16,9 +16,9 @@ public class VendorCreateRequest {
     private String businessAddress;
 
     @NotBlank(message = "Business city is required")
+    @Size(max = 30, message = "City cannot exceed 30 characters")
     private String city;
 
-    @NotBlank(message = "GST number is required")
-    @Size(min = 15, max = 15, message = "GST number should have 15 characters")
+    @Pattern(regexp = "^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z][1-9A-Z]Z[0-9A-Z]$", message = "Invalid GST number")
     private String gstNumber;
 }

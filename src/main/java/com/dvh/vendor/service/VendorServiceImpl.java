@@ -2,6 +2,7 @@ package com.dvh.vendor.service;
 
 import com.dvh.common.exception.InvalidRoleException;
 import com.dvh.common.exception.UserNotFoundException;
+import com.dvh.user.repository.UserRepository;
 import com.dvh.vendor.exception.VendorAlreadyExistsException;
 import com.dvh.user.constants.Role;
 import com.dvh.user.entity.User;
@@ -13,19 +14,22 @@ import com.dvh.vendor.repository.VendorRepository;
 import lombok.*;
 import org.springframework.stereotype.Service;
 
-@AllArgsConstructor@NoArgsConstructor
+@RequiredArgsConstructor
 @Service
 public class VendorServiceImpl implements VendorService{
 
-    private VendorRepository vendorRepository;
-    private VendorMapper vendorMapper;
-
+    private final VendorRepository vendorRepository;
+    private final VendorMapper vendorMapper;
+    private final UserRepository userRepository;
 
     @Override
-    public VendorResponse createVendor(VendorCreateRequest createRequest, User user) {
-        if(user==null){
-            throw new UserNotFoundException("User not found");
-        }
+    public VendorResponse createVendor(VendorCreateRequest createRequest, String userName) {
+
+        User user = userRepository.findByEmail(userName)
+                .orElseThrow(() ->
+                        new UserNotFoundException("User not found"));
+
+
         if(user.getRole()!= Role.VENDOR){
             throw new InvalidRoleException("User is not a vendor");
         }

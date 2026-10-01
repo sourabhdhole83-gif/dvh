@@ -23,16 +23,16 @@ public class VendorServiceImpl implements VendorService{
     private final UserRepository userRepository;
 
     @Override
-    public VendorResponse createVendor(VendorCreateRequest createRequest, String userName) {
+    public VendorResponse createVendor(VendorCreateRequest createRequest, String userEmail) {
 
-        User user = userRepository.findByEmail(userName)
+        User user = userRepository.findByEmail(userEmail)
                 .orElseThrow(() ->
                         new UserNotFoundException("User not found"));
-
 
         if(user.getRole()!= Role.VENDOR){
             throw new InvalidRoleException("User is not a vendor");
         }
+
         if(vendorRepository.existsByUserId(user.getId())){
             throw new VendorAlreadyExistsException("Vendor profile already exists");
         }
@@ -41,7 +41,7 @@ public class VendorServiceImpl implements VendorService{
         vendor.setUser(user);
         Vendor savedVendor = vendorRepository.save(vendor);
 
-        return  vendorMapper.toVendorResponse(savedVendor);
+        return vendorMapper.toVendorResponse(savedVendor);
 
 
     }

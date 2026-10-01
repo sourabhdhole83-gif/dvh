@@ -16,20 +16,20 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/v1/vendor")
+@RequestMapping("/api/v1/vendors")
 public class VendorController {
 
     private final VendorService vendorService;
 
-    @PostMapping("/createVendor")
+    @PostMapping
     public ResponseEntity<APIResponse<VendorResponse>> createVendor(@Valid @RequestBody VendorCreateRequest createRequest){
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String userName = authentication.getName();
+        String userEmail = authentication.getName();
 
-        log.info("Logged-in user: {}", userName );
+        log.info("Logged-in user: {}", userEmail );
 
-        VendorResponse response = vendorService.createVendor(createRequest, userName);
+        VendorResponse response = vendorService.createVendor(createRequest, userEmail);
         return ResponseEntity.status(HttpStatus.CREATED).body(
                 new APIResponse<>(true,"Vendor created successfully",response));
     }

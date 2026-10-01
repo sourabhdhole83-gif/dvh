@@ -6,5 +6,5 @@ import jakarta.validation.Valid;
 
 public interface VendorService {
 
-    VendorResponse createVendor(@Valid VendorCreateRequest createRequest, String userName);
+    VendorResponse createVendor(@Valid VendorCreateRequest createRequest, String userEmail);
 }

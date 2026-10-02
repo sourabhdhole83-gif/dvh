@@ -14,6 +14,7 @@ import com.dvh.vendor.repository.VendorRepository;
 import lombok.*;
 import org.springframework.stereotype.Service;
 
+
 @RequiredArgsConstructor
 @Service
 public class VendorServiceImpl implements VendorService{
@@ -41,7 +42,9 @@ public class VendorServiceImpl implements VendorService{
         vendor.setUser(user);
         Vendor savedVendor = vendorRepository.save(vendor);
 
-        return vendorMapper.toVendorResponse(savedVendor);
+        VendorResponse vendorResponse = vendorMapper.toVendorResponse(savedVendor);
+
+        return vendorResponse;
 
 
     }

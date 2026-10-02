@@ -5,6 +5,7 @@ import lombok.*;
 
 
 @Data@AllArgsConstructor@NoArgsConstructor
+@Builder
 public class VendorCreateRequest {
 
     @NotBlank(message = "Business name is required")

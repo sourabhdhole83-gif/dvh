@@ -3,6 +3,7 @@ package com.dvh.vendor.dto.response;
 import lombok.*;
 
 @Data
+@Builder
 public class VendorResponse {
     private Long id;
     private  String businessName;

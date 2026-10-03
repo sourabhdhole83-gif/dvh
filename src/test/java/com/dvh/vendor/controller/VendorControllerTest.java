@@ -4,7 +4,6 @@ import com.dvh.common.APIResponse;
 import com.dvh.vendor.dto.request.VendorCreateRequest;
 import com.dvh.vendor.dto.response.VendorResponse;
 import com.dvh.vendor.service.VendorService;
-import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;

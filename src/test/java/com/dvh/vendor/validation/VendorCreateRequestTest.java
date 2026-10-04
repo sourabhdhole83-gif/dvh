@@ -12,16 +12,19 @@ public class VendorCreateRequestTest {
     private static Validator validator;
     private static  ValidatorFactory validatorFactory;
 
+
     @BeforeAll
     static void setUp(){
-        validatorFactory = Validation.buildDefaultValidatorFactory();
-        validator = validatorFactory.getValidator();
+         validatorFactory = Validation.buildDefaultValidatorFactory();
+         validator = validatorFactory.getValidator();
     }
 
     @AfterAll
     static void tearDown(){
         validatorFactory.close();
     }
+
+
 
     @Test
     void shouldRejectVendorRequest_whenBusinessNameIsBlank(){
@@ -75,5 +78,40 @@ public class VendorCreateRequestTest {
 
         assertTrue(validate.stream().anyMatch(
                 n->n.getPropertyPath().toString().equals("businessName")));
+    }
+
+    @Test
+    void shouldRejectVendorRequest_whenVendorBusinessAddressIsBlank(){
+        VendorCreateRequest request = VendorCreateRequest.builder()
+                .businessName("Hello Car")
+                .businessAddress("")
+                .city("INDORE")
+                .gstNumber("123ABC")
+                .build();
+
+        Set<ConstraintViolation<VendorCreateRequest>> validate = validator.validate(request);
+
+        assertFalse(validate.isEmpty());
+
+        assertTrue(validate.stream().anyMatch(v->v.getPropertyPath().toString().equals("businessAddress")));
+
+    }
+
+    @Test
+    void shouldRejectVendorRequest_whenVendorsBusinessAddressIsTooLong(){
+        String businessAddress = "A".repeat(256);
+
+        VendorCreateRequest request = VendorCreateRequest.builder()
+                .businessName("Hello Car")
+                .businessAddress(businessAddress)
+                .city("INDORE")
+                .gstNumber("ABC124")
+                .build();
+
+        Set<ConstraintViolation<VendorCreateRequest>> validation = validator.validate(request);
+
+        assertFalse(validation.isEmpty());
+
+        assertTrue(validation.stream().anyMatch(v->v.getPropertyPath().toString().equals("businessAddress")));
     }
 }

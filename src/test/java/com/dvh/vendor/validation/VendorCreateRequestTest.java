@@ -114,4 +114,11 @@ public class VendorCreateRequestTest {
 
         assertTrue(validation.stream().anyMatch(v->v.getPropertyPath().toString().equals("businessAddress")));
     }
+
+    @Test
+    void shouldRejectVendorCreateRequest_whenVendorsCityIsBlank(){
+//        VendorCreateRequest request =VendorCreateRequest.builder()
+
+    }
 }
+

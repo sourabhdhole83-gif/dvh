@@ -6,9 +6,9 @@ import com.dvh.user.constants.Role;
 import com.dvh.user.entity.User;
 import com.dvh.user.repository.UserRepository;
 import com.dvh.vendor.dto.request.VendorCreateRequest;
+import com.dvh.vendor.exception.VendorAlreadyExistsException;
 import com.dvh.vendor.mapper.VendorMapper;
 import com.dvh.vendor.repository.VendorRepository;
-import jakarta.persistence.Enumerated;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -91,6 +91,26 @@ public class VendorServiceImplTest {
 
         verify(userRepository).findByEmail(userEmail);
         verifyNoInteractions(vendorRepository,vendorMapper);
+    }
+
+
+    @Test
+    void createVendor_shouldThrowVendorAlreadyExistsException_whenVendorAlreadyExists(){
+
+        when(vendorRepository.existsByUserId(1L))
+                .thenReturn(true);
+
+        when(userRepository.findByEmail(userEmail))
+                .thenReturn(Optional.of(vendorUser));
+
+        assertThatThrownBy(()-> vendorService.createVendor(request,userEmail))
+                .isInstanceOf(VendorAlreadyExistsException.class)
+                .hasMessage("Vendor profile already exists");
+
+        verify(vendorRepository).existsByUserId(1L);
+        verify(vendorRepository,never()).save(any());
+
+        verifyNoInteractions(vendorMapper);
     }
 
 

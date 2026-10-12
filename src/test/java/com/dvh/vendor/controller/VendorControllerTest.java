@@ -4,6 +4,7 @@ import com.dvh.common.APIResponse;
 import com.dvh.vendor.dto.request.VendorCreateRequest;
 import com.dvh.vendor.dto.response.VendorResponse;
 import com.dvh.vendor.service.VendorService;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
@@ -25,6 +26,11 @@ public class VendorControllerTest {
 
     @InjectMocks
     private VendorController vendorController;
+
+    @AfterEach
+    void tearDown(){
+        SecurityContextHolder.clearContext();
+    }
 
     @Test
     void createVendor_shouldReturnVendorResponse_whenRequestIsValid(){

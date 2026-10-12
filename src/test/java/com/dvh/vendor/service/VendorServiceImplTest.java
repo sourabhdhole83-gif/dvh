@@ -6,6 +6,8 @@ import com.dvh.user.constants.Role;
 import com.dvh.user.entity.User;
 import com.dvh.user.repository.UserRepository;
 import com.dvh.vendor.dto.request.VendorCreateRequest;
+import com.dvh.vendor.dto.response.VendorResponse;
+import com.dvh.vendor.entity.Vendor;
 import com.dvh.vendor.exception.VendorAlreadyExistsException;
 import com.dvh.vendor.mapper.VendorMapper;
 import com.dvh.vendor.repository.VendorRepository;
@@ -16,6 +18,8 @@ import org.junit.jupiter.params.provider.EnumSource;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.*;
+
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.Mockito.*;
 
@@ -66,7 +70,7 @@ public class VendorServiceImplTest {
                 .isInstanceOf(UserNotFoundException.class)
                 .hasMessage("User not found");
 
-        verify(userRepository).existsByEmail(userEmail);
+        verify(userRepository).findByEmail(userEmail);
         verifyNoInteractions(vendorMapper, vendorRepository);
     }
 
@@ -111,8 +115,51 @@ public class VendorServiceImplTest {
         verify(vendorRepository,never()).save(any());
 
         verifyNoInteractions(vendorMapper);
-//        guytjrfytedrht
+    }
+
+    @Test
+    void createVendor_shouldLinkUserSaveAndReturnResponse_whenValidVendorUser(){
+        Vendor vendor = new Vendor();
+
+        Vendor savedVendor = new Vendor();
+        savedVendor.setId(10L);
+
+        VendorResponse expectedResponse = VendorResponse.builder()
+                .businessName("Hello car")
+                .businessAddress("Bhawarkuan")
+                .gstNumber("ABD234")
+                .verified(false)
+                .build();
+
+        when(userRepository.findByEmail(userEmail))
+                .thenReturn(Optional.of(vendorUser));
+
+        when(vendorRepository.existsByUserId(1L))
+                .thenReturn(false);
+
+        when(vendorMapper.toEntity(request))
+                .thenReturn(vendor);
+
+        when(vendorRepository.save(vendor))
+                .thenReturn(savedVendor);
+
+        when(vendorMapper.toVendorResponse(savedVendor))
+                .thenReturn(expectedResponse);
+
+        VendorResponse actual =
+                vendorService.createVendor(request, userEmail);
+
+        assertThat(actual)
+                .isSameAs(expectedResponse);
+
+        ArgumentCaptor<Vendor> captor =
+                ArgumentCaptor.forClass(Vendor.class);
+
+        verify(vendorRepository).save(captor.capture());
+
+        assertThat(captor.getValue().getUser())
+                .isSameAs(vendorUser);
     }
 
 
-}
+    }

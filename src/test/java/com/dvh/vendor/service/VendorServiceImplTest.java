@@ -18,18 +18,16 @@ import org.junit.jupiter.params.provider.EnumSource;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.*;
+import static org.assertj.core.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.BDDMockito.*;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
-import static org.mockito.Mockito.*;
+@ExtendWith(MockitoExtension.class)
+class VendorServiceImplTest {
 
+    private static final String USER_EMAIL = "vendor@gmail.com";
 
-@ExtendWith(MockitoExtension.class) //integrates Mockito with JUnit 5 and automatically initializes Mockito annotations such as @Mock and @InjectMocks
-public class VendorServiceImplTest {
-
-    private static final String userEmail = "Vendor@gmail.com";
-
-    @Mock //creates fake dependencies/creates a fake VendorRepository object
+    @Mock
     private VendorRepository vendorRepository;
 
     @Mock
@@ -38,7 +36,7 @@ public class VendorServiceImplTest {
     @Mock
     private UserRepository userRepository;
 
-    @InjectMocks //creates the real class under test and injects those mocks into it
+    @InjectMocks
     private VendorServiceImpl vendorService;
 
     private User vendorUser;
@@ -46,120 +44,172 @@ public class VendorServiceImplTest {
 
     @BeforeEach
     void setUp() {
-         vendorUser = User.builder()
+
+        vendorUser = User.builder()
                 .id(1L)
-                .email(userEmail)
+                .email(USER_EMAIL)
                 .role(Role.VENDOR)
                 .build();
 
-         request = VendorCreateRequest.builder()
+        request = VendorCreateRequest.builder()
                 .businessName("Hello Car")
                 .businessAddress("Bhawarkuan")
-                .gstNumber("23AAAAA0000A1Z5")
                 .city("INDORE")
+                .gstNumber("23AAAAA0000A1Z5")
                 .build();
     }
 
     @Test
     void createVendor_shouldThrowUserNotFoundException_whenUserDoesNotExist() {
 
-        when(userRepository.findByEmail(userEmail))
-                .thenReturn(Optional.empty());
+        // Given
+        given(userRepository.findByEmail(USER_EMAIL))
+                .willReturn(Optional.empty());
 
-        assertThatThrownBy(() -> vendorService.createVendor(request, userEmail))
+        // When + Then
+        assertThatThrownBy(() ->
+                vendorService.createVendor(request, USER_EMAIL)
+        )
                 .isInstanceOf(UserNotFoundException.class)
                 .hasMessage("User not found");
 
-        verify(userRepository).findByEmail(userEmail);
-        verifyNoInteractions(vendorMapper, vendorRepository);
-    }
+        then(userRepository)
+                .should()
+                .findByEmail(USER_EMAIL);
 
+        then(vendorRepository)
+                .shouldHaveNoInteractions();
+
+        then(vendorMapper)
+                .shouldHaveNoInteractions();
+    }
 
     @ParameterizedTest
     @EnumSource(
             value = Role.class,
-            mode = EnumSource.Mode.EXCLUDE,//A parameterized test that runs the validation logic(InvalidRole) for every role except 'VENDOR',
-            names = "VENDOR"               // ensuring an exception is thrown for all non-vendor roles.
-
+            mode = EnumSource.Mode.EXCLUDE,
+            names = "VENDOR"
     )
-    void createVendor_shouldThrowInvalidRoleException_whenUserIsNotAVendor(Role role){//except vendor all roles will come here
+    void createVendor_shouldThrowInvalidRoleException_whenUserIsNotAVendor(
+            Role role) {
 
+        // Given
         vendorUser.setRole(role);
 
-        when(userRepository.findByEmail(userEmail))
-                .thenReturn(Optional.of(vendorUser));
+        given(userRepository.findByEmail(USER_EMAIL))
+                .willReturn(Optional.of(vendorUser));
 
-        assertThatThrownBy(()->vendorService.createVendor(request,userEmail))
+        // When + Then
+        assertThatThrownBy(() ->
+                vendorService.createVendor(request, USER_EMAIL)
+        )
                 .isInstanceOf(InvalidRoleException.class)
                 .hasMessage("User is not a vendor");
 
-        verify(userRepository).findByEmail(userEmail);
-        verifyNoInteractions(vendorRepository,vendorMapper);
+        then(userRepository)
+                .should()
+                .findByEmail(USER_EMAIL);
+
+        then(vendorRepository)
+                .shouldHaveNoInteractions();
+
+        then(vendorMapper)
+                .shouldHaveNoInteractions();
     }
 
-
     @Test
-    void createVendor_shouldThrowVendorAlreadyExistsException_whenVendorAlreadyExists(){
+    void createVendor_shouldThrowVendorAlreadyExistsException_whenVendorAlreadyExists() {
 
-        when(vendorRepository.existsByUserId(1L))
-                .thenReturn(true);
+        // Given
+        given(userRepository.findByEmail(USER_EMAIL))
+                .willReturn(Optional.of(vendorUser));
 
-        when(userRepository.findByEmail(userEmail))
-                .thenReturn(Optional.of(vendorUser));
+        given(vendorRepository.existsByUserId(1L))
+                .willReturn(true);
 
-        assertThatThrownBy(()-> vendorService.createVendor(request,userEmail))
+        // When + Then
+        assertThatThrownBy(() ->
+                vendorService.createVendor(request, USER_EMAIL)
+        )
                 .isInstanceOf(VendorAlreadyExistsException.class)
                 .hasMessage("Vendor profile already exists");
 
-        verify(vendorRepository).existsByUserId(1L);
-        verify(vendorRepository,never()).save(any());
+        then(userRepository)
+                .should()
+                .findByEmail(USER_EMAIL);
 
-        verifyNoInteractions(vendorMapper);
+        then(vendorRepository)
+                .should()
+                .existsByUserId(1L);
+
+        then(vendorRepository)
+                .should(org.mockito.Mockito.never())
+                .save(any());
+
+        then(vendorMapper)
+                .shouldHaveNoInteractions();
     }
 
     @Test
-    void createVendor_shouldLinkUserSaveAndReturnResponse_whenValidVendorUser(){
+    void createVendor_shouldLinkUserSaveAndReturnResponse_whenValidVendorUser() {
+
+        // Given
         Vendor vendor = new Vendor();
 
         Vendor savedVendor = new Vendor();
         savedVendor.setId(10L);
 
         VendorResponse expectedResponse = VendorResponse.builder()
-                .businessName("Hello car")
+                .id(10L)
+                .businessName("Hello Car")
                 .businessAddress("Bhawarkuan")
-                .gstNumber("ABD234")
+                .gstNumber("23AAAAA0000A1Z5")
                 .verified(false)
                 .build();
 
-        when(userRepository.findByEmail(userEmail))
-                .thenReturn(Optional.of(vendorUser));
+        given(userRepository.findByEmail(USER_EMAIL))
+                .willReturn(Optional.of(vendorUser));
 
-        when(vendorRepository.existsByUserId(1L))
-                .thenReturn(false);
+        given(vendorRepository.existsByUserId(1L))
+                .willReturn(false);
 
-        when(vendorMapper.toEntity(request))
-                .thenReturn(vendor);
+        given(vendorMapper.toEntity(request))
+                .willReturn(vendor);
 
-        when(vendorRepository.save(vendor))
-                .thenReturn(savedVendor);
+        given(vendorRepository.save(vendor))
+                .willReturn(savedVendor);
 
-        when(vendorMapper.toVendorResponse(savedVendor))
-                .thenReturn(expectedResponse);
+        given(vendorMapper.toVendorResponse(savedVendor))
+                .willReturn(expectedResponse);
 
+        // When
         VendorResponse actual =
-                vendorService.createVendor(request, userEmail);
+                vendorService.createVendor(request, USER_EMAIL);
 
+        // Then
         assertThat(actual)
                 .isSameAs(expectedResponse);
 
-        ArgumentCaptor<Vendor> captor =
-                ArgumentCaptor.forClass(Vendor.class);
+        then(userRepository)
+                .should()
+                .findByEmail(USER_EMAIL);
 
-        verify(vendorRepository).save(captor.capture());
+        then(vendorRepository)
+                .should()
+                .existsByUserId(1L);
 
-        assertThat(captor.getValue().getUser())
-                .isSameAs(vendorUser);
+        then(vendorMapper)
+                .should()
+                .toEntity(request);
+
+        then(vendorRepository)
+                .should(times(1))
+                .save(argThat(v ->
+                        v != null && v.getUser() == vendorUser
+                ));
+
+        then(vendorMapper)
+                .should()
+                .toVendorResponse(savedVendor);
     }
-
-
-    }
+}

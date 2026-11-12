@@ -1,6 +1,8 @@
 spring:
   application:
     name: dvh
+  config:
+    import: optional:file:.env[.properties]
   datasource:
     url: ${DB_URL:jdbc:mysql://localhost:3306/dvh?createDatabaseIfNotExist=true}
     username: ${DB_USERNAME:root}

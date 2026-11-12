@@ -1,5 +1,6 @@
 package com.dvh.user.entity;
 
+import com.dvh.common.entity.BaseEntity;
 import com.dvh.user.constants.Role;
 import com.dvh.user.constants.UserStatus;
 import jakarta.persistence.*;
@@ -12,11 +13,12 @@ uniqueConstraints = {
         @UniqueConstraint(name = "uk_user_email",columnNames = "email"),
         @UniqueConstraint(name = "uk_user_phone",columnNames = "phone")
 })
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class User {
+public class User extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,7 +34,7 @@ public class User {
     private String phone;
 
     @Column(name = "password_hash",nullable = false)
-    private String password;
+    private String passwordHash;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -42,25 +44,5 @@ public class User {
     @Column(nullable = false)
     private UserStatus userStatus;
 
-    @Column(name = "created_at")
-    private LocalDateTime createdAt;
-
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
-
-    @PrePersist
-    protected void onCreate(){
-        createdAt=LocalDateTime.now();
-        updatedAt=LocalDateTime.now();
-
-        if(userStatus==null){
-            userStatus=UserStatus.ACTIVE;
-        }
-    }
-
-    @PreUpdate
-    protected void onUpdate(){
-        updatedAt=LocalDateTime.now();
-    }
 }
 

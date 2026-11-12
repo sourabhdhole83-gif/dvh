@@ -1,5 +1,6 @@
 package com.dvh.vehicle.entity;
 
+import com.dvh.common.entity.BaseEntity;
 import com.dvh.vehicle.constants.FuelType;
 import com.dvh.vehicle.constants.TransmissionType;
 import com.dvh.vehicle.constants.VehicleType;
@@ -7,13 +8,16 @@ import com.dvh.vendor.entity.Vendor;
 import jakarta.persistence.*;
 import lombok.*;
 
-
-@Data@NoArgsConstructor@AllArgsConstructor@Builder
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Entity
 @Table(name = "vehicles",
         uniqueConstraints = {
         @UniqueConstraint(name = "uk_vehicle_number",columnNames = "vehicle_number")})
-public class Vehicle {
+public class Vehicle extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

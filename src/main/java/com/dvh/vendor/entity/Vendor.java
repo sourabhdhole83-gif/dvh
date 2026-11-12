@@ -1,5 +1,6 @@
 package com.dvh.vendor.entity;
 
+import com.dvh.common.entity.BaseEntity;
 import com.dvh.user.entity.User;
 import com.dvh.vehicle.entity.Vehicle;
 import jakarta.persistence.*;
@@ -21,7 +22,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Vendor {
+public class Vendor extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

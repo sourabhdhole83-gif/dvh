@@ -43,7 +43,7 @@ public class UserServiceImpl implements UserService{
         }
 
         User user = mapper.toUserEntity(userCreateRequest);
-        user.setPassword(encoder.encode(userCreateRequest.getPassword()));
+        user.setPasswordHash(encoder.encode(userCreateRequest.getPassword()));
 
         User savedUser = userRepository.save(user);
         return mapper.toUserResponse(savedUser);

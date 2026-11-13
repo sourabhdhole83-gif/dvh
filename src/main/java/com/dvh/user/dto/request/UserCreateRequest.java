@@ -19,14 +19,15 @@ public class UserCreateRequest {
     private String email;
 
     @NotBlank(message = "Phone number is required")
-    @Pattern(regexp = "^[0-9]{10}$",
-            message = "Phone must contain exactly 10 digits")
+    @Pattern(regexp = "^[6-9][0-9]{9}$",
+            message = "Enter a valid 10 digit Indian mobile number")
     private String phone;
 
     @NotBlank(message = "Password is required")
     @Size(min = 8, max = 64, message = "Password must be between 8 and 64 characters")
     @Pattern(regexp = "^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[@#$%^&+=!]).+$",
             message = "Password must contain uppercase, lowercase, digit and special character")
+    @ToString.Exclude
     private String password;
 
     @NotNull(message = "Role is required")

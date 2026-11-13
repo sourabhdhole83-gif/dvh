@@ -5,6 +5,7 @@ import com.dvh.user.constants.UserStatus;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.*;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 @Data
 @JsonPropertyOrder({
@@ -24,6 +25,6 @@ public class UserResponse {
     private String phone;
     private Role role;
     private UserStatus userStatus;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
+    private Instant createdAt;
+    private Instant updatedAt;
 }

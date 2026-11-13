@@ -4,19 +4,20 @@ import com.dvh.common.ErrorResponse;
 import com.dvh.user.exception.UserAlreadyExistsException;
 import com.dvh.vendor.exception.VendorAlreadyExistsException;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.*;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
+import java.time.*;
+import java.util.*;
 
-import java.time.LocalDateTime;
-import java.util.LinkedHashMap;
-import java.util.Map;
-
+@Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> exception(Exception exception,HttpServletRequest request){
+        log.error("Unhandled exception at {}",request.getRequestURI(),exception);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(new ErrorResponse(
                         LocalDateTime.now(),

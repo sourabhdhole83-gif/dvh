@@ -3,6 +3,7 @@ package com.dvh.user.service;
 import com.dvh.common.exception.InvalidRoleException;
 import com.dvh.common.exception.UserNotFoundException;
 import com.dvh.user.constants.Role;
+import com.dvh.user.constants.UserStatus;
 import com.dvh.user.dto.request.UserCreateRequest;
 import com.dvh.user.dto.response.UserResponse;
 import com.dvh.user.entity.User;
@@ -44,6 +45,7 @@ public class UserServiceImpl implements UserService{
 
         User user = mapper.toUserEntity(userCreateRequest);
         user.setPasswordHash(encoder.encode(userCreateRequest.getPassword()));
+        user.setUserStatus(UserStatus.ACTIVE);
 
         User savedUser = userRepository.save(user);
         return mapper.toUserResponse(savedUser);

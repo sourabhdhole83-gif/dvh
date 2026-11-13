@@ -1,13 +1,12 @@
 package com.dvh.common.entity;
 
 import jakarta.persistence.*;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
+import lombok.*;
+import org.springframework.data.annotation.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
 import java.time.*;
 
-
+@Getter
 @MappedSuperclass //“ye class khud table nahi banegi, par iske fields jo bhi child entity isse extend kare, uski table mein columns ban jayenge.”
 @EntityListeners(AuditingEntityListener.class)
 public abstract class BaseEntity {

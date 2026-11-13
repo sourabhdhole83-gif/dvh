@@ -5,7 +5,9 @@ import com.dvh.user.exception.UserAlreadyExistsException;
 import com.dvh.vendor.exception.VendorAlreadyExistsException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.*;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 import java.time.*;
@@ -103,5 +105,24 @@ public class GlobalExceptionHandler {
                         ex.getMessage(),
                         req.getRequestURI(),
                         null));
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ErrorResponse> unreadableBody(HttpMessageNotReadableException ex,
+                                                        HttpServletRequest req){
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new ErrorResponse(LocalDateTime.now(), "MALFORMED_REQUEST",
+                        "Malformed JSON or invalid value in request body",
+                        req.getRequestURI(), null));
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<ErrorResponse> dataIntegrity(DataIntegrityViolationException ex,
+                                                       HttpServletRequest req){
+        log.warn("Data integrity violation at {}", req.getRequestURI(), ex);
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(new ErrorResponse(LocalDateTime.now(), "DATA_CONFLICT",
+                        "Data conflicts with an existing record",
+                        req.getRequestURI(), null));
     }
 }

@@ -30,9 +30,12 @@ public class UserServiceImpl implements UserService{
         if(userCreateRequest.getRole()== Role.ADMIN){
             throw new InvalidRoleException( "ADMIN role cannot be created through public registration");
         }
+
+        String email = userCreateRequest.getEmail().trim().toLowerCase();
+
         Map<String,String> errors = new LinkedHashMap<>();
-        if(userRepository.existsByEmail(userCreateRequest.getEmail())){
-            log.warn("Duplicate registration attempt for email={}", userCreateRequest.getEmail());
+        if(userRepository.existsByEmail(email)){
+            log.warn("Duplicate registration attempt for email={}", email);
             errors.put("email","Email is already registered");
         }
         if(userRepository.existsByPhone(userCreateRequest.getPhone())){
@@ -44,6 +47,7 @@ public class UserServiceImpl implements UserService{
         }
 
         User user = mapper.toUserEntity(userCreateRequest);
+        user.setEmail(email);
         user.setPasswordHash(encoder.encode(userCreateRequest.getPassword()));
         user.setUserStatus(UserStatus.ACTIVE);
 

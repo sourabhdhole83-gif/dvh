@@ -112,4 +112,38 @@ class UserServiceImplTest {
                 .isInstanceOf(UserNotFoundException.class)
                 .hasMessage("User not found with id: 99");
     }
+
+    @Test
+    void createUser_shouldSaveEmailInLowercase_andTrimmed() {
+        request.setEmail("  Test@GMAIL.com ");
+        User mapped = User.builder()
+                .name("Sourabh").email("  Test@GMAIL.com ").phone("9876543210")
+                .role(Role.CUSTOMER).build();
+
+        given(userRepository.existsByEmail("test@gmail.com")).willReturn(false);
+        given(userRepository.existsByPhone("9876543210")).willReturn(false);
+        given(mapper.toUserEntity(request)).willReturn(mapped);
+        given(encoder.encode("Test@1234")).willReturn("hashed-password");
+        given(userRepository.save(any(User.class))).willAnswer(inv -> inv.getArgument(0));
+
+        userService.createUser(request);
+
+        ArgumentCaptor<User> captor = ArgumentCaptor.forClass(User.class);
+        then(userRepository).should().save(captor.capture());
+        assertThat(captor.getValue().getEmail()).isEqualTo("test@gmail.com");
+    }
+
+    @Test
+    void createUser_shouldDetectDuplicate_evenWhenEmailCaseDiffers() {
+        request.setEmail("TEST@Gmail.com");
+
+        given(userRepository.existsByEmail("test@gmail.com")).willReturn(true);
+        given(userRepository.existsByPhone("9876543210")).willReturn(false);
+
+        assertThatThrownBy(() -> userService.createUser(request))
+                .isInstanceOfSatisfying(UserAlreadyExistsException.class, ex ->
+                        assertThat(ex.getErrors()).containsOnlyKeys("email"));
+
+        then(userRepository).should(never()).save(any());
+    }
 }

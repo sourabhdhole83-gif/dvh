@@ -13,6 +13,7 @@ import com.dvh.vendor.mapper.VendorMapper;
 import com.dvh.vendor.repository.VendorRepository;
 import lombok.*;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 
 @RequiredArgsConstructor
@@ -24,6 +25,7 @@ public class VendorServiceImpl implements VendorService{
     private final UserRepository userRepository;
 
     @Override
+    @Transactional
     public VendorResponse createVendor(VendorCreateRequest createRequest, String userEmail) {
 
         User user = userRepository.findByEmail(userEmail)

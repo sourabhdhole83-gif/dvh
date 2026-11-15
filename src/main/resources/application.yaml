@@ -1,16 +1,17 @@
 spring:
   application:
-    name: dvh
+    name: dvh                                   # application name
   config:
-    import: optional:file:.env[.properties]
+    import: optional:file:.env[.properties]     # load values from .env (no error if the file is missing)
+  profiles:
+    default: dev                                # profile used when none is specified
   datasource:
-    url: ${DB_URL:jdbc:mysql://localhost:3306/dvh?createDatabaseIfNotExist=true}
-    username: ${DB_USERNAME:root}
-    password: ${DB_PASSWORD}
+    url: ${DB_URL}                              # database URL, from .env
+    username: ${DB_USERNAME:root}               # database user, defaults to root if not set
+    password: ${DB_PASSWORD}                    # database password, from .env
   jpa:
-    hibernate:
-      ddl-auto: update
-    show-sql: true
+    open-in-view: false                         # Session remains only up to the @Transactional service; no lazy loading in the controller
 
 server:
-  port: 5555
+  port: 5555                                    # app runs on http://localhost:5555
+

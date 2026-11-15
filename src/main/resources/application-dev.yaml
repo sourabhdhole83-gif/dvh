@@ -1,0 +1,9 @@
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: update     # update the schema automatically from entities (development only)
+    show-sql: true         # print executed SQL to the console
+
+logging:
+  level:
+    com.dvh: debug         # detailed logs for application code

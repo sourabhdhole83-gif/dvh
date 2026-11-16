@@ -1,0 +1,9 @@
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: validate     # only verify the schema matches the entities, never modify it
+    show-sql: false          # do not print SQL (noise and possible sensitive data)
+
+logging:
+  level:
+    com.dvh: info            # only important logs

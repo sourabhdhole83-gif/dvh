@@ -1,0 +1,21 @@
+services:                                   # list of containers to run
+  mysql:                                    # service name (we run only one: the database)
+    image: mysql:8.4                        # MySQL version 8.4, pulled from Docker Hub
+    container_name: dvh-mysql               # container name, shown in "docker ps"
+    restart: unless-stopped                 # restart after a crash or PC reboot, unless stopped manually
+    environment:                            # settings passed into the container
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}   # root password, read from .env
+      MYSQL_DATABASE: dvh                   # database created automatically on first start
+    ports:
+      - "3307:3306"                         # hostport:containerport; 3307 on the host avoids clashing with a local MySQL on 3306
+    volumes:
+      - dvh_mysql_data:/var/lib/mysql       # store MySQL data in a volume so it survives container removal
+    healthcheck:                            # tells Docker when MySQL is actually ready
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-p${DB_PASSWORD}"]      # a successful ping means healthy
+      interval: 10s                         # run the check every 10 seconds
+      timeout: 5s                           # a check taking longer than 5 seconds counts as failed
+      retries: 5                            # 5 consecutive failures mark the container unhealthy
+
+volumes:                                    # declaration of the volume used above
+  dvh_mysql_data:                           # volume name, managed by Docker
+

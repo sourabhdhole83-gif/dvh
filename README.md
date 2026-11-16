@@ -34,15 +34,26 @@ Roles: `ADMIN`, `CUSTOMER`, `VENDOR`. Minimum booking duration: 12 hours.
    ```
 2. Copy `.env.example` to `.env` and fill the values
 
-DB_URL=jdbc:mysql://localhost:3306/dvh?createDatabaseIfNotExist=true
+For Docker Compose, MySQL is exposed on port `3307`; use the following database URL:
+
+```properties
+DB_URL=jdbc:mysql://localhost:3307/dvh?createDatabaseIfNotExist=true
 DB_USERNAME=root
 DB_PASSWORD=your_password
+```
+
+For a locally installed MySQL server on port `3306`, use that port in `DB_URL` instead.
 
 3. Run
    ```bash
    ./mvnw spring-boot:run
    ```
-   The app starts on `http://localhost:5555`.
+   Flyway applies pending SQL migrations from `src/main/resources/db/migration` before Hibernate validates the schema. The app starts on `http://localhost:5555`.
+
+   The development profile automatically baselines a non-empty existing database at version 1 to preserve its data. Hibernate then validates the existing schema against the entities. New databases run the V1 migration.
+
+### API documentation
+Open Swagger UI at `http://localhost:5555/swagger-ui/index.html`. The OpenAPI document is available at `http://localhost:5555/v3/api-docs`.
 
 ### Run tests
 ```bash

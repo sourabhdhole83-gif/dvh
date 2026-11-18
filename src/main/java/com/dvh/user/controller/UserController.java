@@ -4,6 +4,8 @@ import com.dvh.common.APIResponse;
 import com.dvh.user.dto.request.UserCreateRequest;
 import com.dvh.user.dto.response.UserResponse;
 import com.dvh.user.service.UserService;
+import io.swagger.v3.oas.annotations.*;
+import io.swagger.v3.oas.annotations.tags.*;
 import jakarta.validation.*;
 import lombok.*;
 import org.springframework.http.HttpStatus;
@@ -13,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/v1/users")
-public class UserController {
+public class UserController implements UserAPI {
     private final UserService userService;
 
 
@@ -24,6 +26,7 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED).body(new APIResponse<>(true,"User created successfully",user));
 
     }
+
 
     @GetMapping("/{id}")
     public ResponseEntity<APIResponse<UserResponse>> getUserById(@PathVariable Long id){

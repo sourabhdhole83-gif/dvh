@@ -1,9 +1,15 @@
 package com.dvh.vendor.controller;
 
 import com.dvh.common.APIResponse;
+import com.dvh.common.ErrorResponse;
 import com.dvh.vendor.dto.request.VendorCreateRequest;
 import com.dvh.vendor.dto.response.VendorResponse;
 import com.dvh.vendor.service.VendorService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.*;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
@@ -17,7 +23,8 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/v1/vendors")
-public class VendorController {
+
+public class VendorController implements VendorAPI{
 
     private final VendorService vendorService;
 

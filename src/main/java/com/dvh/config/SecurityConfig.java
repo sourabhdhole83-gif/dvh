@@ -14,7 +14,13 @@ public class SecurityConfig {
         httpSecurity.csrf(csrf->csrf.disable())
                 .authorizeHttpRequests(
                         auth->auth.requestMatchers("/api/v1/users","/api/v1/users/{id}")
-                                .permitAll().anyRequest().authenticated());
+                                .permitAll().anyRequest().authenticated())
+                .authorizeHttpRequests(auth->auth
+                        .requestMatchers("/swagger-ui.html",      // Swagger ka main page
+                                "/swagger-ui/**",        // uski CSS/JS files
+                                "/v3/api-docs/**" )      // raw OpenAPI JSON, UI isi ko padhta hai
+                        .permitAll()
+                        .anyRequest().permitAll());
 
         return httpSecurity.build();
     }

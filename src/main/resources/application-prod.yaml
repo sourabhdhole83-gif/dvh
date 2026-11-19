@@ -7,3 +7,9 @@ spring:
 logging:
   level:
     com.dvh: info            # only important logs
+
+springdoc:
+  api-docs:
+    enabled: false
+  swagger-ui:
+    enabled: false

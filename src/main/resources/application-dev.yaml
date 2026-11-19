@@ -4,9 +4,15 @@ spring:
       ddl-auto: validate   # Hibernate ab sirf check karega ki entities aur tables match karte hain ya nahi. Tables nahi banayega, wo kaam Flyway ka hai
     show-sql: true         # console mein SQL print hoti rahegi
   flyway:
-    enabled: true                      # Flyway on
+    enabled: true                      # Flyway on, nahi bhi likhenge toh bhi chalega
     locations: classpath:db/migration  # yahan se V1__... files padhega
 
 logging:
   level:
     com.dvh: debug         # tumhare code ke detailed logs
+
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true

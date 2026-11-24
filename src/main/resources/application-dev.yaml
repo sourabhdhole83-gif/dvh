@@ -1,18 +1,14 @@
+# application-dev.yaml (sirf development ke liye, base file ke upar override hota hai)
 spring:
   jpa:
-    hibernate:
-      ddl-auto: validate   # Hibernate ab sirf check karega ki entities aur tables match karte hain ya nahi. Tables nahi banayega, wo kaam Flyway ka hai
-    show-sql: true         # console mein SQL print hoti rahegi
-  flyway:
-    enabled: true                      # Flyway on, nahi bhi likhenge toh bhi chalega
-    locations: classpath:db/migration  # yahan se V1__... files padhega
+    show-sql: true                              # console me SQL print hoti rahegi, debugging me kaam aati hai
 
 logging:
   level:
-    com.dvh: debug         # tumhare code ke detailed logs
+    com.dvh: debug                              # apne code ke detailed logs dikhenge
 
 springdoc:
   api-docs:
-    enabled: true
+    enabled: true                               # OpenAPI JSON /v3/api-docs pe milega
   swagger-ui:
-    enabled: true
+    enabled: true                               # Swagger UI se browser me API test kar sakte ho

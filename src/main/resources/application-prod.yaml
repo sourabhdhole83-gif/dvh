@@ -1,15 +1,17 @@
 spring:
   jpa:
-    hibernate:
-      ddl-auto: validate     # only verify the schema matches the entities, never modify it
-    show-sql: false          # do not print SQL (noise and possible sensitive data)
+    show-sql: false                # SQL print nahi hogi
+  web:
+    error:
+      include-stacktrace: never    # stacktrace client tak nahi jayega
+      include-message: never       # error message bhi client tak nahi jayega
 
 logging:
   level:
-    com.dvh: info            # only important logs
+    com.dvh: info                  # sirf important logs
 
 springdoc:
   api-docs:
-    enabled: false
+    enabled: false                 # prod me API docs band
   swagger-ui:
-    enabled: false
+    enabled: false                 # prod me Swagger UI band

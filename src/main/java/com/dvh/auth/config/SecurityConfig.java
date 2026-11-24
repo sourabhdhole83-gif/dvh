@@ -1,4 +1,4 @@
-package com.dvh.security.config;
+package com.dvh.auth.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

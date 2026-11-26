@@ -1,5 +1,6 @@
 package com.dvh.common.exception;
 
+import com.dvh.auth.exception.AccountNotActiveException;
 import com.dvh.common.ErrorResponse;
 import com.dvh.user.exception.UserAlreadyExistsException;
 import com.dvh.vendor.exception.VendorAlreadyExistsException;
@@ -8,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.*;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 import java.time.*;
@@ -111,9 +113,12 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> unreadableBody(HttpMessageNotReadableException ex,
                                                         HttpServletRequest req){
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(new ErrorResponse(LocalDateTime.now(), "MALFORMED_REQUEST",
+                .body(new ErrorResponse(
+                        LocalDateTime.now(),
+                        "MALFORMED_REQUEST",
                         "Malformed JSON or invalid value in request body",
-                        req.getRequestURI(), null));
+                        req.getRequestURI(),
+                        null));
     }
 
     @ExceptionHandler(DataIntegrityViolationException.class)
@@ -121,8 +126,38 @@ public class GlobalExceptionHandler {
                                                        HttpServletRequest req){
         log.warn("Data integrity violation at {}", req.getRequestURI(), ex);
         return ResponseEntity.status(HttpStatus.CONFLICT)
-                .body(new ErrorResponse(LocalDateTime.now(), "DATA_CONFLICT",
+                .body(new ErrorResponse(
+                        LocalDateTime.now(),
+                        "DATA_CONFLICT",
                         "Data conflicts with an existing record",
-                        req.getRequestURI(), null));
+                        req.getRequestURI(),
+                        null));
+    }
+
+    @ExceptionHandler(AccountNotActiveException.class)
+    public ResponseEntity<ErrorResponse> accountNotActiveException(AccountNotActiveException ex
+                                                                    ,HttpServletRequest request){
+
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body(new ErrorResponse(
+                        LocalDateTime.now(),
+                        "ACCOUNT_NOT_ACTIVE",
+                        ex.getMessage(),
+                        request.getRequestURI(),
+                        null));
+    }
+
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<ErrorResponse> badCredentialsException(BadCredentialsException ex,HttpServletRequest request){
+        log.warn("Failed login attempt ip={} uri={}", request.getRemoteAddr(),request.getRequestURI());
+
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(new ErrorResponse(
+                        LocalDateTime.now(),
+                        "INVALID_CREDENTIALS",
+                        "Invalid email or password",
+                        request.getRequestURI(),
+                        null
+                ));
     }
 }

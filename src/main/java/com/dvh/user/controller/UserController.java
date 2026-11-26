@@ -32,5 +32,6 @@ public class UserController implements UserAPI {
     public ResponseEntity<APIResponse<UserResponse>> getUserById(@PathVariable Long id){
         UserResponse userResponse = userService.getUserById(id);
         return ResponseEntity.status(HttpStatus.OK)
-                .body(new APIResponse<>(true, "User details fetched successfully", userResponse));    }
+                .body(new APIResponse<>(true, "User details fetched successfully", userResponse));
+    }
 }

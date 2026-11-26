@@ -35,6 +35,11 @@ public class JwtService {
                 .compact();
     }
 
+    public long getAccessTokenExpirySeconds(){
+        return accessTokenExpiryMs / 1000;
+    }
+
+
     public Claims parseToken(String token) {
         return Jwts.parser().verifyWith(key).build()
                 .parseSignedClaims(token).getPayload();

@@ -1,4 +1,4 @@
-package com.dvh.config;
+package com.dvh.auth.config;
 
 import org.springframework.context.annotation.*;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;

@@ -1,19 +1,27 @@
+
 package com.dvh.config;
 
-import io.swagger.v3.oas.models.OpenAPI;
-import io.swagger.v3.oas.models.info.Info;
-import org.springframework.context.annotation.Bean;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
+import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import org.springframework.context.annotation.Configuration;
 
-@Configuration  // Spring ko batata hai: is class mein @Bean methods hain, startup pe padh lo
+@Configuration
+@OpenAPIDefinition(
+        info = @Info(
+                title = "DVH - Dhole Vehicle Hub API",
+                description = "Self-drive vehicle rental platform APIs",
+                version = "v1"
+        ),
+        security = @SecurityRequirement(name = "bearerAuth")
+)
+@SecurityScheme(
+        name = "bearerAuth",
+        type = SecuritySchemeType.HTTP,
+        scheme = "bearer",
+        bearerFormat = "JWT"
+)
 public class OpenApiConfig {
-
-    @Bean  // yeh object Spring ke container mein register hoga, springdoc ise utha lega
-    public OpenAPI dvhOpenAPI() {
-        return new OpenAPI()
-                .info(new Info()
-                        .title("DVH - Dhole Vehicle Hub API")      // Swagger page ke top pe dikhega
-                        .description("Self-drive vehicle rental platform APIs")
-                        .version("v1"));                            // API ka version
-    }
 }

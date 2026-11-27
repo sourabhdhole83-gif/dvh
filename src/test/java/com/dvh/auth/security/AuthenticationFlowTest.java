@@ -1,7 +1,7 @@
 package com.dvh.auth.security;
 
 import com.dvh.auth.config.SecurityConfig;
-import com.dvh.config.PasswordConfig;
+import com.dvh.auth.config.PasswordConfig;
 import com.dvh.user.constants.Role;
 import com.dvh.user.constants.UserStatus;
 import com.dvh.user.entity.User;
